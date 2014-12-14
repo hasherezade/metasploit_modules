@@ -1,0 +1,157 @@
+#
+# This module requires Metasploit: http//metasploit.com/download
+# Current source: https://github.com/rapid7/metasploit-framework
+##
+require 'msf/core'
+
+class Metasploit3 < Msf::Auxiliary
+  include Msf::Exploit::Remote::HttpClient
+
+  def initialize(info={})
+    super(update_info(info,
+      'Name'           => "Md5 lookup",
+      'Description'    => %q{
+          This module do md5 lookup. 
+      },
+      'License'        => MSF_LICENSE,
+      'Author'         =>
+        [
+          'hAsh' # Metasploit module
+        ]
+    ))
+
+    register_options(
+    [
+      OptPath.new('PATH', [true, 'File with md5 hashes']),
+    ])
+    register_advanced_options(
+    [
+      OptPort.new('RPORT',[true, 'Port of the lookup service', 80]),
+      OptString.new('RHOST',[true, 'Host used for lookup', 'md5cracker.org']),
+      OptString.new('TARGETURI', [true, 'URI of the lookup service', '/api/api.cracker.php']),
+    ])
+    deregister_options('VHOST', 'Proxies')
+  end
+
+# utils
+  def read_file()
+    path = datastore['PATH']
+    print_status("Trying to read file: #{path}")
+
+    if not File::exist?(path)
+      print_error("No such file")
+      return nil
+    elsif not File::file?(path)
+      print_error("Invalid path")
+      return nil
+    end
+    arr = Array.new
+    my_file = File::new(path, mode="r")
+    my_file.each {|line| 
+      hash = fetchMd5(line)
+      if hash
+         arr << hash
+      end
+      }
+    my_file.close
+    print_status("Found hashes: #{arr.length}")
+    return arr
+  end
+
+  def get_string_between(my_string, start_at, end_at)
+    my_string = "#{my_string}"
+
+    ini = my_string.index(start_at)
+    return nil if ini == 0
+
+    ini += start_at.length
+    length = my_string.index(end_at, ini).to_i - ini
+    my_string[ini,length]
+  end
+
+  def fetchMd5(my_string)
+    if my_string  =~ /([0-9a-f]{32})/
+      return $1
+    end
+    return nil
+  end
+
+  def md5search(hash, database)
+    hash = fetchMd5(hash)
+    if not hash
+      return nil
+    end
+
+    port = datastore['PORT']
+    old_ssl = autoenable_ssl(port)
+    res = send_request_cgi({
+        'method' => 'GET',
+        'uri'    => normalize_uri(target_uri.path),
+        'vars_get'   => { "database" => database, "hash" => hash }
+    })
+    datastore['SSL'] = old_ssl
+
+    if not res or res.code != 200 or res.body.empty?
+      print_error("#{url}, db: #{database} - returned invalid response")
+      return nil
+    end
+    # "status":true, "result":"123",
+    if res.body =~ /\>404 Not Found\</
+       return nil
+    end
+
+    if res.body =~ /true/
+      tag1 = "result\":\""
+      tag2 = "\","
+      password = get_string_between(res.body, tag1, tag2)
+      return password
+    end
+    return nil
+  end
+
+  def md5crack(hash)
+    md5_databases = ["md5.net", "md5pass", "netmd5crack", "md5cracker.org", "i337.net","md5decryption.com", "authsecu"]
+    for db in md5_databases
+      pass = md5search(hash, db)
+      if pass
+        return pass
+      end
+    end
+    return nil
+  end
+
+  def crack_hashes(arr)
+    return nil if not arr
+    cracked = 0
+    for chunk in arr
+      pass = md5crack(chunk)
+      if pass
+        print_good("#{chunk} : #{pass}")
+        cracked += 1
+      else
+        print_error("#{chunk}")
+      end
+    end
+    print_status("Found passwords: #{cracked} out of #{arr.length}")
+  end
+
+  def autoenable_ssl(port)
+    old_ssl = datastore['SSL']
+      if (port == 80)
+        datastore['SSL'] = false
+      elsif (port == 443)
+        datastore['SSL'] = true
+      end
+      return old_ssl
+  end
+
+# MSF API:
+
+  def run
+    arr = read_file()
+    print_status("Attempting to reverse hashes...")
+    crack_hashes(arr)
+  end
+
+end
+
