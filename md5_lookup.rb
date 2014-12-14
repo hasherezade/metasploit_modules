@@ -116,7 +116,19 @@ class Metasploit3 < Msf::Auxiliary
   end
 
   def md5crack(hash)
-    md5_databases = ["md5.net", "md5pass", "netmd5crack", "md5cracker.org", "i337.net","md5decryption.com", "authsecu"]
+    md5_databases = [
+    "authsecu",
+    "i337.net",
+    "md5.my-addr.com",
+    "md5.net",
+    "md5crack",
+    "md5cracker.org", 
+    "md5decryption.com",
+    "md5online.net",
+    "md5pass",
+    "netmd5crack",
+    "tmto"
+    ]
     for db in md5_databases
       pass = md5search(hash, db)
       if pass
