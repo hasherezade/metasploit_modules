@@ -51,16 +51,18 @@ class Metasploit3 < Msf::Auxiliary
       print_error("Invalid path")
       return nil
     end
-    arr = Array.new
+    hash_counter = 0
+    arr = Set.new
     my_file = File::new(path, mode="r")
     my_file.each {|line| 
       hash = fetchMd5(line)
       if hash
          arr << hash
+         hash_counter += 1
       end
       }
     my_file.close
-    print_status("Found hashes: #{arr.length}")
+    print_status("Found hashes: #{hash_counter}, unique: #{arr.length}")
     return arr
   end
 
