@@ -52,18 +52,18 @@ class Metasploit3 < Msf::Auxiliary
       return nil
     end
     hash_counter = 0
-    arr = Set.new
+    hashes = Set.new
     my_file = File::new(path, mode="r")
     my_file.each {|line| 
       hash = fetchMd5(line)
       if hash
-         arr << hash
+         hashes << hash
          hash_counter += 1
       end
       }
     my_file.close
-    print_status("Found hashes: #{hash_counter}, unique: #{arr.length}")
-    return arr
+    print_status("Found hashes: #{hash_counter}, unique: #{hashes.length}")
+    return hashes
   end
 
   def get_string_between(my_string, start_at, end_at)
@@ -140,10 +140,10 @@ class Metasploit3 < Msf::Auxiliary
     return nil
   end
 
-  def crack_hashes(arr)
-    return nil if not arr
+  def crack_hashes(hashes)
+    return nil if not hashes
     cracked = 0
-    for chunk in arr
+    for chunk in hashes
       pass = md5crack(chunk)
       if pass
         print_good("#{chunk} : #{pass}")
@@ -152,7 +152,7 @@ class Metasploit3 < Msf::Auxiliary
         print_error("#{chunk}")
       end
     end
-    print_status("Found passwords: #{cracked} out of #{arr.length}")
+    print_status("Found passwords: #{cracked} out of #{hashes.length}")
   end
 
   def autoenable_ssl(port)
@@ -168,9 +168,9 @@ class Metasploit3 < Msf::Auxiliary
 # MSF API:
 
   def run
-    arr = read_file()
+    hashes = read_file()
     print_status("Attempting to reverse hashes...")
-    crack_hashes(arr)
+    crack_hashes(hashes)
   end
 
 end
