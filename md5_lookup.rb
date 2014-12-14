@@ -90,7 +90,7 @@ class Metasploit3 < Msf::Auxiliary
       return nil
     end
 
-    port = datastore['PORT']
+    port = datastore['RPORT']
     old_ssl = autoenable_ssl(port)
     res = send_request_cgi({
         'method' => 'GET',
