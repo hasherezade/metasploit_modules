@@ -1,7 +1,13 @@
 #
 # This module requires Metasploit: http//metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
-##
+#
+# MD5 lookup
+#
+# Author: hasherezade (http://hasherezade.net)
+# Source: https://github.com/hasherezade/metasploit_modules/blob/master/md5_lookup.rb
+#
+
 require 'msf/core'
 
 class Metasploit3 < Msf::Auxiliary
@@ -11,12 +17,12 @@ class Metasploit3 < Msf::Auxiliary
     super(update_info(info,
       'Name'           => "Md5 lookup",
       'Description'    => %q{
-          This module do md5 lookup. 
+          This auxiliary module attempts to reverse provided MD5 hashes by lookup in online databases.
       },
       'License'        => MSF_LICENSE,
       'Author'         =>
         [
-          'hAsh' # Metasploit module
+          'hAsh (http://hasherezade.net)' # Metasploit module
         ]
     ))
 
@@ -70,7 +76,7 @@ class Metasploit3 < Msf::Auxiliary
   end
 
   def fetchMd5(my_string)
-    if my_string  =~ /([0-9a-f]{32})/
+    if my_string  =~ /([0-9a-fA-F]{32})/
       return $1
     end
     return nil
