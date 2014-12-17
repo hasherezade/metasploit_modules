@@ -1,0 +1,13 @@
+readme.txt
+readme.html
+readme.php
+robots.txt
+.htaccess
+changelog.txt
+license.txt
+install.txt
+help.php
+wp-admin/
+administrator/
+administration/
+wp-login.php
