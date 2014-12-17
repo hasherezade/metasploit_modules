@@ -41,7 +41,7 @@ class Metasploit3 < Msf::Auxiliary
 
 # utils
   def read_dir(dir)
-    return nil if not dir
+    return nil if not dir or dir.length == 0
 
     if not File::directory?(dir)
       print_error("Not a directory: #{dir}")
@@ -108,7 +108,6 @@ class Metasploit3 < Msf::Auxiliary
     path = datastore['CMS_DIR'] + "/" + path
 
     if not File::exist?(path)
-      print_error("Not existing local file: #{path}")
       return -1
     elsif File::directory?(path)
       return 1
@@ -201,7 +200,7 @@ class Metasploit3 < Msf::Auxiliary
     verbose = datastore['VERBOSE']
     print_status("Verbose mode: #{verbose}")
 
-    if datastore['PATH']
+    if datastore['PATH'] and datastore['PATH'].length > 0
       fname = datastore['PATH']
       print_status("Searching by list, PATH = #{fname}")
       paths = read_file(fname)
@@ -211,7 +210,7 @@ class Metasploit3 < Msf::Auxiliary
       print_error('PATH not set!')
     end
 
-    if datastore['CMS_DIR']
+    if datastore['CMS_DIR'] and datastore['CMS_DIR'].length > 0
       cms = datastore['CMS_DIR']
       print_status("Searching by CMS_DIR = #{cms}")
       paths = read_dir(cms)
