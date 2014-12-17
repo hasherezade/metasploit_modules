@@ -34,7 +34,7 @@ class Metasploit3 < Msf::Auxiliary
       OptRegexp.new('NOT_FOUND', [true, '404 pattern', '/Not Found/']),
       OptRegexp.new('EXCLUDE_NAMES', [true, 'Skip files with names matching the pattern','\.(?:php|js|css|png|jpg|gif)$']),
       OptBool.new('DISPLAY_ERR', [true, 'Display error codes (if different than 404)', 'false']),
-      OptBool.new('COMPARE_FILES', [true, 'Compare remote file with local','true'])
+      OptBool.new('COMPARE_FILES', [true, "Compare remote file with local (Out: [+] - same; [-] - different; [?] - not compared)",'true'])
     ])
     deregister_options('VHOST', 'Proxies')
   end
@@ -147,7 +147,7 @@ class Metasploit3 < Msf::Auxiliary
       if is_same == 1
         verified = '[+]'
       elsif is_same == 0
-        verified = '[!]'
+        verified = '[-]'
       end
 
       print_good("#{verified} #{url}")
