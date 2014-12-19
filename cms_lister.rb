@@ -105,7 +105,10 @@ class Metasploit3 < Msf::Auxiliary
   end
 
   def compare_content(path, res_body)
-    path = datastore['CMS_DIR'] + "/" + path
+    dir = datastore['CMS_DIR']
+    return -1 if not dir
+
+    path = "#{dir}/#{path}"
 
     if not File::exist?(path)
       return -1
