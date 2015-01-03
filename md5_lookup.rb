@@ -35,6 +35,9 @@ class Metasploit3 < Msf::Auxiliary
       OptPort.new('RPORT',[true, 'Port of the lookup service', 80]),
       OptString.new('RHOST',[true, 'Host used for lookup', 'md5cracker.org']),
       OptString.new('TARGETURI', [true, 'URI of the lookup service', '/api/api.cracker.php']),
+      OptString.new('DATABASES',[true, 'Comma separated list of MD5 online databases',
+          "authsecu, i337.net, md5.my-addr.com, md5.net, md5crack, md5cracker.org, md5decryption.com, md5online.net, md5pass, netmd5crack, tmto"
+          ]),
     ])
     deregister_options('VHOST', 'Proxies')
   end
@@ -117,20 +120,16 @@ class Metasploit3 < Msf::Auxiliary
     return nil
   end
 
-  def md5crack(hash)
-    md5_databases = [
-    "authsecu",
-    "i337.net",
-    "md5.my-addr.com",
-    "md5.net",
-    "md5crack",
-    "md5cracker.org", 
-    "md5decryption.com",
-    "md5online.net",
-    "md5pass",
-    "netmd5crack",
-    "tmto"
-    ]
+  def fetch_db_names(names_string)
+    values = names_string.split(",").map(&:strip)
+    if values 
+      return values.to_set()
+    end
+    return nil
+  end
+
+
+  def md5crack(hash, md5_databases)
     for db in md5_databases
       pass = md5search(hash, db)
       if pass
@@ -140,11 +139,11 @@ class Metasploit3 < Msf::Auxiliary
     return nil
   end
 
-  def crack_hashes(hashes)
+  def crack_hashes(hashes, md5_databases)
     return nil if not hashes
     cracked = 0
     for chunk in hashes
-      pass = md5crack(chunk)
+      pass = md5crack(chunk, md5_databases)
       if pass
         print_good("#{chunk} : #{pass}")
         cracked += 1
@@ -169,8 +168,20 @@ class Metasploit3 < Msf::Auxiliary
 
   def run
     hashes = read_file()
+    if not hashes or hashes.length() == 0
+      print_error("No hashes supplied")
+      return nil
+    end
+    md5_dbs = fetch_db_names(datastore['DATABASES'])
+    if not md5_dbs or md5_dbs.length() == 0
+      print_error("No databases supplied!")
+      return nil
+    end
+    if datastore['VERBOSE']
+      print_status("Loaded: #{md5_dbs.length()} databases")
+    end
     print_status("Attempting to reverse hashes...")
-    crack_hashes(hashes)
+    crack_hashes(hashes, md5_dbs)
   end
 
 end
