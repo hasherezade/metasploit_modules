@@ -156,9 +156,9 @@ class Metasploit3 < Msf::Auxiliary
 
   def autoenable_ssl(port)
     old_ssl = datastore['SSL']
-      if (port == 80)
+      if (port == URI::HTTP::DEFAULT_PORT)
         datastore['SSL'] = false
-      elsif (port == 443)
+      elsif (port == URI::HTTPS::DEFAULT_PORT)
         datastore['SSL'] = true
       end
       return old_ssl
