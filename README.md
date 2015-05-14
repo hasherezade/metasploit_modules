@@ -12,5 +12,8 @@ https://github.com/rapid7/metasploit-framework/blob/master/tools/md5_lookup.rb <
 ![](https://pbs.twimg.com/media/B4xl9HQIUAAfwr0.png)
 cms_lister.rb
 -
-![](http://hasherezade.net/misc/pics/cms_lister1.png)
-![](http://hasherezade.net/misc/pics/cms_lister2.png)
+options:<br/>
+![](http://hasherezade.net/misc/pics/cms_lister_1.png)
+
+running:<br/>
+![](http://hasherezade.net/misc/pics/cms_lister_2.png)
