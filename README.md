@@ -7,9 +7,11 @@
 
 md_lookup.rb
 -
-(now also available as part of metasploit-framework: <br/>
+/*<br/>
+this module has been ported as a part of metasploit-framework: <br/>
 https://github.com/rapid7/metasploit-framework/blob/master/tools/password/md5_lookup.rb
-<br/>- thx to sinn3r)<br/>
+<br/>- thanks to sinn3r: ([![Social](https://img.shields.io/twitter/follow/_sinn3r.svg?style=social)](http://www.twitter.com/_sinn3r)<br/>
+*/<br/>
 ![](https://pbs.twimg.com/media/B4xl9HQIUAAfwr0.png)
 cms_lister.rb
 -
