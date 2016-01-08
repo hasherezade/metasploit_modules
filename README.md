@@ -8,7 +8,8 @@
 md_lookup.rb
 -
 (now also available as part of metasploit-framework: <br/>
-https://github.com/rapid7/metasploit-framework/blob/master/tools/md5_lookup.rb <br/>- thx to sinn3r)<br/>
+https://github.com/rapid7/metasploit-framework/blob/master/tools/password/md5_lookup.rb
+<br/>- thx to sinn3r)<br/>
 ![](https://pbs.twimg.com/media/B4xl9HQIUAAfwr0.png)
 cms_lister.rb
 -
